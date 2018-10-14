@@ -29,7 +29,7 @@ python -m pip install tkDocViewer userpaths pillow
 
 You can then start PDF Renamer from the source directory by running:
 ```
-./pdfrenamer.py
+./run.py
 ```
 
 You can also install it system-wide by running:
