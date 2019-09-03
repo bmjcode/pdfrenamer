@@ -45,25 +45,25 @@ class PDFRenamer(Tk):
         Tk.__init__(self)
         self.title(None)            # Note we've overridden this function
 
-        # List of open files
-        self.open_files = []
+        # List of currently displayed files
+        self._files = []
 
-        # Index of the currently selected file in self.open_files
-        self.selected_index = 0
+        # Index of the currently selected file in self._files
+        self._selected_index = 0
 
         # Absolute path of the currently selected file
         # This is a StringVar so it can double as a variable for the
         # radio buttons in the Go menu.
-        self.selected_file = StringVar()
+        self._selected_file = StringVar()
 
         # Basename of the current file, minus the extension
-        self.new_name = StringVar()
+        self._new_name = StringVar()
 
         # Last used directory for the Browse dialog
-        self.browse_dir = userpaths.get_my_documents()
+        self._browse_dir = userpaths.get_my_documents()
 
         # Last used directory for the "Rename and Move" feature
-        self.rename_and_move_dir = userpaths.get_my_documents()
+        self._rename_and_move_dir = userpaths.get_my_documents()
 
         # Frame for the rename controls
         f = Frame(self)
@@ -84,7 +84,7 @@ class PDFRenamer(Tk):
 
         # Text entry for the new filename
         e = self.filename_entry = Entry(f,
-                                        textvariable=self.new_name)
+                                        textvariable=self._new_name)
         e.pack(side="left", expand=1, fill="both", padx=2)
 
         # Key bindings for the entry box
@@ -243,10 +243,10 @@ class PDFRenamer(Tk):
 
         # Start in the directory containing the current file, or the
         # current working directory if no files are currently open
-        if self.open_files:
-            initialdir = os.path.dirname(self.selected_file.get())
+        if self._files:
+            initialdir = os.path.dirname(self._selected_file.get())
         else:
-            initialdir = self.browse_dir
+            initialdir = self._browse_dir
 
         d = askdirectory(parent=self,
                          title="Open Folder",
@@ -256,27 +256,27 @@ class PDFRenamer(Tk):
             # Note that self.open_dir() will normalize this pathname
             self.open_dir(d)
 
-        elif not self.open_files:
+        elif not self._files:
             # Close the application if no files were previously open
             self.close_window()
 
     def close_file(self, event=None):
         """Close the current file and display the next."""
 
-        i = self.selected_index
+        i = self._selected_index
 
         # Cancel rendering
         self.viewer.cancel_rendering()
 
         # Remove this file from the list
-        del self.open_files[i]
+        del self._files[i]
 
         # Update the navigation menu
         self._update_go_menu()
 
         # Display the next file on the list, or close the program
         # if we've run out of files
-        return self._preview(i if i < len(self.open_files) - 1 else 0, True)
+        return self._preview(i if i < len(self._files) - 1 else 0, True)
 
     def close_window(self, event=None):
         """Close the application window."""
@@ -301,16 +301,16 @@ class PDFRenamer(Tk):
     def go_next(self, event=None):
         """Display the next file to process."""
 
-        p = self.open_files
-        i = self.selected_index
+        p = self._files
+        i = self._selected_index
 
         self._preview(i + 1 if i < len(p) - 1 else 0)
 
     def go_previous(self, event=None):
         """Display the previous file to process."""
 
-        p = self.open_files
-        i = self.selected_index
+        p = self._files
+        i = self._selected_index
 
         self._preview(i - 1 if i > 0 else len(p) - 1)
 
@@ -319,13 +319,13 @@ class PDFRenamer(Tk):
 
         if paths:
             # Close all open files
-            while self.open_files:
+            while self._files:
                 self.close_file()
 
             for path in paths:
                 if os.path.isfile(path):
                     # Save the absolute path to this file
-                    self.open_files.append(os.path.abspath(path))
+                    self._files.append(os.path.abspath(path))
 
             self._update_go_menu()
             self._preview(0, True)
@@ -335,7 +335,7 @@ class PDFRenamer(Tk):
                         "Could not find any of the specified files.",
                         parent=self)
 
-            if not self.open_files:
+            if not self._files:
                 # Close the application if no files were previously open
                 self.close_window()
 
@@ -357,8 +357,8 @@ class PDFRenamer(Tk):
         items = list(items)
 
         if items:
-            self.open_files = items
-            self.selected_index = 0
+            self._files = items
+            self._selected_index = 0
             self._preview(0)
             self._update_go_menu()
 
@@ -369,7 +369,7 @@ class PDFRenamer(Tk):
                         .format(path),
                         parent=self)
 
-            if not self.open_files:
+            if not self._files:
                 # Close the application if no files were previously open
                 self.close_window()
 
@@ -377,7 +377,7 @@ class PDFRenamer(Tk):
         """Open the current document in the user's default viewer."""
 
         try:
-            os.startfile(self.selected_file.get())
+            os.startfile(self._selected_file.get())
 
         except (Exception):
             showwarning("Not Implemented",
@@ -389,8 +389,8 @@ class PDFRenamer(Tk):
 
         # Note: Binding directly to self.viewer.reload() won't work if
         # we renamed the document before reloading, so we have to do this.
-        if self.open_files:
-            self._preview(self.selected_index)
+        if self._files:
+            self._preview(self._selected_index)
 
     def rename(self, event=None):
         """Rename the current file.
@@ -433,13 +433,13 @@ class PDFRenamer(Tk):
             self.wait_variable(rendering)
 
         # Get the extension of the displayed file
-        src_base, ext = os.path.splitext(self.selected_file.get())
+        src_base, ext = os.path.splitext(self._selected_file.get())
 
         # Prompt for a destination filename
         dst_path = asksaveasfilename(parent=self,
                                      title="Rename and Move",
-                                     initialdir=self.rename_and_move_dir,
-                                     initialfile=self.new_name.get() + ext,
+                                     initialdir=self._rename_and_move_dir,
+                                     initialfile=self._new_name.get() + ext,
                                      defaultextension=ext)
 
         # Sanity check: Make sure the user entered a filename
@@ -452,10 +452,10 @@ class PDFRenamer(Tk):
 
         # Save the new name for this file
         dst_base, ext = os.path.splitext(dst_base)
-        self.new_name.set(dst_base)
+        self._new_name.set(dst_base)
 
         # Save the last-used destination folder
-        self.rename_and_move_dir = dst_dir
+        self._rename_and_move_dir = dst_dir
 
         try:
             self._process_rename(dst_dir)
@@ -469,11 +469,11 @@ class PDFRenamer(Tk):
     def reset_new_name(self, event=None):
         """Reset the new name of the displayed file."""
 
-        selected_file = self.selected_file.get()
+        selected_file = self._selected_file.get()
         base, ext = os.path.splitext(os.path.basename(selected_file))
 
         # Reset the displayed basename
-        self.new_name.set(base)
+        self._new_name.set(base)
 
         # Set the focus on the filename entry box and select all text
         self.focus_filename_entry()
@@ -495,10 +495,10 @@ class PDFRenamer(Tk):
         cfg.read([config.config_path])
 
         if cfg.has_option("ui", "browse_dir"):
-            self.browse_dir = cfg.get("ui", "browse_dir")
+            self._browse_dir = cfg.get("ui", "browse_dir")
 
         if cfg.has_option("ui", "rename_and_move_dir"):
-            self.rename_and_move_dir = cfg.get("ui", "rename_and_move_dir")
+            self._rename_and_move_dir = cfg.get("ui", "rename_and_move_dir")
 
         if cfg.has_option("ui", "enable_downscaling"):
             enable_downscaling = cfg.getboolean("ui", "enable_downscaling")
@@ -508,7 +508,7 @@ class PDFRenamer(Tk):
         """Preview the selected file."""
 
         # Sanity check: Make sure we actually have files to process.
-        if not self.open_files:
+        if not self._files:
             if close_when_out_of_files:
                 return self.close_window()
 
@@ -516,15 +516,15 @@ class PDFRenamer(Tk):
                 # Prompt for a new folder the first time we run out of files.
                 # If the user cancels this time, quit the application.
                 self.browse()
-                if not self.open_files:
+                if not self._files:
                     return self.close_window()
 
-        self.selected_index = index
-        selected_file = self.open_files[index]
-        self.selected_file.set(selected_file)
+        self._selected_index = index
+        selected_file = self._files[index]
+        self._selected_file.set(selected_file)
 
         # Open the next Browse dialog in the directory containing this file
-        self.browse_dir = os.path.dirname(selected_file)
+        self._browse_dir = os.path.dirname(selected_file)
 
         # Sanity check: Make sure the file still exists. If it doesn't,
         # remove it silently from the list and display the next one.
@@ -535,7 +535,7 @@ class PDFRenamer(Tk):
         self.viewer.display_file(selected_file)
 
         # Update the title bar to show where we are in the list
-        self.title("{0} of {1}".format(index + 1, len(self.open_files)))
+        self.title("{0} of {1}".format(index + 1, len(self._files)))
 
         # Reset the new name of the displayed file
         self.reset_new_name()
@@ -548,12 +548,12 @@ class PDFRenamer(Tk):
         """
 
         # Identify the new name the user has entered
-        dst_base = self.new_name.get()
+        dst_base = self._new_name.get()
         if not dst_base:
             raise RenamerError("Please enter a new name for this file.")
 
         # Identify the displayed file
-        src_path = self.selected_file.get()
+        src_path = self._selected_file.get()
 
         # Separate the dirname and basename
         src_dir, src_base = os.path.split(src_path)
@@ -579,8 +579,8 @@ class PDFRenamer(Tk):
             shutil.move(src_path, dst_path)
 
             # Update the list of available files
-            self.open_files[self.selected_index] = dst_path
-            self.selected_file.set(dst_path)
+            self._files[self._selected_index] = dst_path
+            self._selected_file.set(dst_path)
 
             # Update the Go menu
             self._update_go_menu()
@@ -604,8 +604,8 @@ class PDFRenamer(Tk):
         if not cfg.has_section("ui"):
             cfg.add_section("ui")
 
-        cfg.set("ui", "browse_dir", self.browse_dir)
-        cfg.set("ui", "rename_and_move_dir", self.rename_and_move_dir)
+        cfg.set("ui", "browse_dir", self._browse_dir)
+        cfg.set("ui", "rename_and_move_dir", self._rename_and_move_dir)
         cfg.set("ui", "enable_downscaling",
                 str(self.viewer.enable_downscaling.get()))
 
@@ -630,13 +630,13 @@ class PDFRenamer(Tk):
         m_go.delete(3, "end")
 
         i = 0
-        for path in self.open_files:
+        for path in self._files:
             # Command to display this file
             go_command = lambda event=None, i=i: self._preview(i)
 
             # Add this file to the menu
             m_go.add_radiobutton(label=os.path.basename(path),
-                                 variable=self.selected_file,
+                                 variable=self._selected_file,
                                  value=path,
                                  command=go_command)
             i += 1
