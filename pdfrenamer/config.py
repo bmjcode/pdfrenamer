@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Configuration data."""
 
 import os

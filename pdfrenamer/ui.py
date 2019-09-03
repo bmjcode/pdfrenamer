@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """PDF Renamer user interface."""
 
 import os
