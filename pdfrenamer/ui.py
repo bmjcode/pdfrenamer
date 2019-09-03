@@ -8,14 +8,18 @@ try:
     # Python 3
     from tkinter import *
     from tkinter.ttk import *
-    from tkinter.filedialog import askdirectory, asksaveasfilename
+    from tkinter.filedialog import (askdirectory,
+                                    askopenfilenames,
+                                    asksaveasfilename)
     from tkinter.messagebox import showerror, showwarning
     from tkinter import Button as TkButton
 except (ImportError):
     # Python 2
     from Tkinter import *
     from ttk import *
-    from tkFileDialog import askdirectory, asksaveasfilename
+    from tkFileDialog import (askdirectory,
+                              askopenfilenames,
+                              asksaveasfilename)
     from tkMessageBox import showerror, showwarning
     from Tkinter import Button as TkButton
 
@@ -120,10 +124,13 @@ class PDFRenamer(Tk):
 
         # File menu
         m_file = Menu(m, tearoff=0)
-        m_file.add_command(label="Open Folder...",
-                           underline=0,
+        m_file.add_command(label="Open Files...",
                            accelerator="Ctrl+O",
+                           underline=0,
                            command=self.browse)
+        m_file.add_command(label="Open Folder...",
+                           underline=5,
+                           command=self.browse_for_dir)
         m_file.add_separator()
         m_file.add_command(label="Open in Default Viewer...",
                            underline=16,
@@ -239,7 +246,7 @@ class PDFRenamer(Tk):
         self.wait_window(ad)
 
     def browse(self, event=None):
-        """Browse for a directory to process."""
+        """Browse for files to process."""
 
         # Start in the directory containing the current file, or the
         # current working directory if no files are currently open
@@ -248,13 +255,40 @@ class PDFRenamer(Tk):
         else:
             initialdir = self._browse_dir
 
-        d = askdirectory(parent=self,
-                         title="Open Folder",
-                         initialdir=initialdir)
+        filetypes = (
+            ("All Files", "*.*"),
+        )
 
-        if d:
-            # Note that self.open_dir() will normalize this pathname
-            self.open_dir(d)
+        new_files = askopenfilenames(parent=self,
+                                     title="Select Files to Rename",
+                                     initialdir=initialdir,
+                                     filetypes=filetypes)
+
+        if new_files:
+            # Note that self.open() will normalize the pathnames
+            self.open(*new_files)
+
+        elif not self._files:
+            # Close the application if no files were previously open
+            self.close_window()
+
+    def browse_for_dir(self, event=None):
+        """Browse for an entire directory to process."""
+
+        # Start in the directory containing the current file, or the
+        # current working directory if no files are currently open
+        if self._files:
+            initialdir = os.path.dirname(self._selected_file.get())
+        else:
+            initialdir = self._browse_dir
+
+        new_dir = askdirectory(parent=self,
+                               title="Select Folder",
+                               initialdir=initialdir)
+
+        if new_dir:
+            # Note that self.open_dir() will normalize the pathname
+            self.open_dir(new_dir)
 
         elif not self._files:
             # Close the application if no files were previously open
