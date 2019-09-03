@@ -531,12 +531,12 @@ class PDFRenamer(Tk):
         if cfg.has_option("ui", "browse_dir"):
             self._browse_dir = cfg.get("ui", "browse_dir")
 
-        if cfg.has_option("ui", "rename_and_move_dir"):
-            self._rename_and_move_dir = cfg.get("ui", "rename_and_move_dir")
-
         if cfg.has_option("ui", "enable_downscaling"):
             enable_downscaling = cfg.getboolean("ui", "enable_downscaling")
             self.viewer.enable_downscaling.set(enable_downscaling)
+
+        if cfg.has_option("ui", "rename_and_move_dir"):
+            self._rename_and_move_dir = cfg.get("ui", "rename_and_move_dir")
 
     def _preview(self, index=0, close_when_out_of_files=False):
         """Preview the selected file."""
@@ -639,9 +639,9 @@ class PDFRenamer(Tk):
             cfg.add_section("ui")
 
         cfg.set("ui", "browse_dir", self._browse_dir)
-        cfg.set("ui", "rename_and_move_dir", self._rename_and_move_dir)
         cfg.set("ui", "enable_downscaling",
                 str(self.viewer.enable_downscaling.get()))
+        cfg.set("ui", "rename_and_move_dir", self._rename_and_move_dir)
 
         try:
             # Make a folder for the configuration file if needed
