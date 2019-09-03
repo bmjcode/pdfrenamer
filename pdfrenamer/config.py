@@ -7,7 +7,7 @@ import sys
 
 # Application name and version
 NAME = "PDF Renamer"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 # ------------------------------------------------------------------------
 
