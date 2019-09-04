@@ -312,12 +312,16 @@ class PDFRenamer(Tk):
     def close_file(self, event=None):
         """Close the current file and display the next."""
 
-        # Close the current file
-        self._close_current()
+        self.viewer.cancel_rendering()
+        self.viewer.erase()
+
+        i = self._selected_index
+        del self._files[i]
 
         if self._files:
+            self._update_go_menu()
+
             # Display the next file on the list
-            i = self._selected_index
             self._preview(i if i < len(self._files) - 1 else 0)
 
         else:
@@ -364,9 +368,13 @@ class PDFRenamer(Tk):
         """Open each of the specified files."""
 
         if paths:
+            self.viewer.cancel_rendering()
+            self.viewer.erase()
+
             # Close all open files
-            while self._files:
-                self._close_current()
+            del self._files[:]
+            self._update_go_menu()
+            self._selected_index = 0
 
             for path in paths:
                 if os.path.isfile(path):
@@ -533,21 +541,6 @@ class PDFRenamer(Tk):
             Tk.title(self, config.NAME)
 
     # ------------------------------------------------------------------------
-
-    def _close_current(self):
-        """Close the current file."""
-
-        # Cancel rendering
-        self.viewer.cancel_rendering()
-
-        # Remove this file from the list
-        del self._files[self._selected_index]
-
-        # Update the navigation menu
-        self._update_go_menu()
-
-        # Erase all displayed content
-        self.viewer.erase()
 
     def _load_config(self):
         """Load configuration options."""
