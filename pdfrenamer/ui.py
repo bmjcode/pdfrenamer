@@ -374,10 +374,8 @@ class PDFRenamer(Frame):
         try:
             util.startfile(self._selected_file.get())
 
-        except (Exception):
-            showwarning("Not Implemented",
-                        "This feature is not available on your system.",
-                        parent=self)
+        except (Exception) as err:
+            showwarning("Error", err, parent=self)
 
     def reload(self, event=None):
         """Reload the displayed document from disk."""
