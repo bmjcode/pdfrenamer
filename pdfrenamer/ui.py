@@ -23,13 +23,13 @@ from .about_dialog import AboutDialog
 __all__ = ["PDFRenamer"]
 
 
-class PDFRenamer(Tk):
+class PDFRenamer(Frame):
     """PDF Renamer user interface."""
 
-    def __init__(self):
+    def __init__(self, master, **kw):
         """Return a new PDF Renamer application window."""
 
-        Tk.__init__(self)
+        Frame.__init__(self, master, **kw)
         self.title(None)            # Note we've overridden this function
 
         # List of currently displayed files
@@ -137,7 +137,8 @@ class PDFRenamer(Tk):
         self.bind("<Escape>", v.cancel_rendering)
 
         # Call close_window() when the window is X'd
-        self.protocol("WM_DELETE_WINDOW", self.close_window)
+        top = self.winfo_toplevel()
+        top.protocol("WM_DELETE_WINDOW", self.close_window)
 
         # Load configuration options
         self._load_config()
@@ -280,7 +281,7 @@ class PDFRenamer(Tk):
                       err,
                       parent=self)
 
-        self.destroy()
+        self.winfo_toplevel().destroy()
 
     def focus_filename_entry(self, event=None):
         """Set the focus on the filename entry widget and select all text."""
@@ -475,10 +476,12 @@ class PDFRenamer(Tk):
     def title(self, string=None):
         """Set the title of this window."""
 
+        top = self.winfo_toplevel()
+
         if string:
-            Tk.title(self, "{0} - {1}".format(config.NAME, string))
+            top.title("{0} - {1}".format(config.NAME, string))
         else:
-            Tk.title(self, config.NAME)
+            top.title(config.NAME)
 
     # ------------------------------------------------------------------------
 

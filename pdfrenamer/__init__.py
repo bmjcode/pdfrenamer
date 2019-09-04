@@ -5,7 +5,7 @@ import sys
 
 from glob import iglob
 
-from tkinter import TclError, ttk
+from tkinter import TclError, Tk, ttk
 
 from .ui import PDFRenamer
 
@@ -18,7 +18,10 @@ def main():
     """Start the PDF Renamer application."""
 
     # Start the application
-    r = PDFRenamer()
+    root = Tk()
+
+    r = PDFRenamer(root)
+    r.pack(side="top", expand=1, fill="both")
 
     # Configure toolbar button styles
     s = ttk.Style()
@@ -27,7 +30,7 @@ def main():
 
     try:
         # Start with the window maximized
-        r.wm_state("zoomed")
+        root.wm_state("zoomed")
 
     except (TclError):
         # ...this isn't available on all platforms
@@ -53,4 +56,4 @@ def main():
         # Browse for a folder after the main loop has started
         r.after(50, r.browse)
 
-    r.mainloop()
+    root.mainloop()
