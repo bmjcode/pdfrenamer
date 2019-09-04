@@ -10,7 +10,7 @@ VERSION = "1.1.0"
 # ------------------------------------------------------------------------
 
 # Copyright and license information
-COPYRIGHT = "Copyright (c) 2016, 2017, 2018 Benjamin Johnson"
+COPYRIGHT = "Copyright (c) 2016, 2017, 2018, 2019 Benjamin Johnson"
 
 LICENSE = """\
 Permission to use, copy, modify, and distribute this software for any
