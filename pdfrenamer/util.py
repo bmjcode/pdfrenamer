@@ -41,6 +41,7 @@ except (AttributeError):
     import subprocess
 
     # Find an appropriate opener for startfile()
+    _startfile_opener = None
     for basename in ("open", "xdg-open"):
         cmd = find_executable(basename)
         if cmd:
