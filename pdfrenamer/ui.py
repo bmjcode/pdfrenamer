@@ -123,20 +123,7 @@ class PDFRenamer(Frame):
 
         # Populate the menu bar
         self._create_menus()
-
-        # Key bindings
-        top.bind("<F5>", self.reload)
-        top.bind("<Prior>", self.go_previous)               # page up
-        top.bind("<Next>", self.go_next)                    # page down
-        top.bind("<Control-l>", self.focus_filename_entry)
-        top.bind("<Control-m>", self.rename_and_move)
-        top.bind("<Control-o>", self.browse)
-        top.bind("<Control-q>", self.close_window)
-        top.bind("<Control-r>", self.open_in_default_viewer)
-        top.bind("<Control-w>", self.close_file)
-
-        # Cancel PDF rendering when Esc is pressed
-        top.bind("<Escape>", v.cancel_rendering)
+        self._bind_keys()
 
         # Call close_window() when the window is X'd
         top.protocol("WM_DELETE_WINDOW", self.close_window)
@@ -483,6 +470,29 @@ class PDFRenamer(Frame):
             top.title(config.NAME)
 
     # ------------------------------------------------------------------------
+
+    def _bind_keys(self):
+        """Configure key bindings."""
+
+        top = self.winfo_toplevel()
+
+        # Cancel PDF rendering when Esc is pressed
+        top.bind("<Escape>", self.viewer.cancel_rendering)
+
+        # Reload the document when F5 is pressed
+        top.bind("<F5>", self.reload)
+
+        # Page Up and Page Down are previous/next document, respectively
+        top.bind("<Prior>", self.go_previous)               # page up
+        top.bind("<Next>", self.go_next)                    # page down
+
+        # Control-letter key bindings, in alphabetical order
+        top.bind("<Control-l>", self.focus_filename_entry)
+        top.bind("<Control-m>", self.rename_and_move)
+        top.bind("<Control-o>", self.browse)
+        top.bind("<Control-q>", self.close_window)
+        top.bind("<Control-r>", self.open_in_default_viewer)
+        top.bind("<Control-w>", self.close_file)
 
     def _create_menus(self):
         """Populate the menu bar."""
