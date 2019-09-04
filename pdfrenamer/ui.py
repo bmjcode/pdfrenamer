@@ -297,20 +297,17 @@ class PDFRenamer(Tk):
     def close_file(self, event=None):
         """Close the current file and display the next."""
 
-        i = self._selected_index
+        # Close the current file
+        self._close_current()
 
-        # Cancel rendering
-        self.viewer.cancel_rendering()
+        if self._files:
+            # Display the next file on the list
+            i = self._selected_index
+            self._preview(i if i < len(self._files) - 1 else 0)
 
-        # Remove this file from the list
-        del self._files[i]
-
-        # Update the navigation menu
-        self._update_go_menu()
-
-        # Display the next file on the list, or close the program
-        # if we've run out of files
-        return self._preview(i if i < len(self._files) - 1 else 0, True)
+        else:
+            # We're out of files; close the program
+            self.close_window()
 
     def close_window(self, event=None):
         """Close the application window."""
@@ -354,7 +351,7 @@ class PDFRenamer(Tk):
         if paths:
             # Close all open files
             while self._files:
-                self.close_file()
+                self._close_current()
 
             for path in paths:
                 if os.path.isfile(path):
@@ -362,7 +359,7 @@ class PDFRenamer(Tk):
                     self._files.append(os.path.abspath(path))
 
             self._update_go_menu()
-            self._preview(0, True)
+            self._preview(0)
 
         else:
             showwarning("No Files",
@@ -522,6 +519,21 @@ class PDFRenamer(Tk):
 
     # ------------------------------------------------------------------------
 
+    def _close_current(self):
+        """Close the current file."""
+
+        # Cancel rendering
+        self.viewer.cancel_rendering()
+
+        # Remove this file from the list
+        del self._files[self._selected_index]
+
+        # Update the navigation menu
+        self._update_go_menu()
+
+        # Erase all displayed content
+        self.viewer.erase()
+
     def _load_config(self):
         """Load configuration options."""
 
@@ -538,20 +550,16 @@ class PDFRenamer(Tk):
         if cfg.has_option("ui", "rename_and_move_dir"):
             self._rename_and_move_dir = cfg.get("ui", "rename_and_move_dir")
 
-    def _preview(self, index=0, close_when_out_of_files=False):
+    def _preview(self, index=0):
         """Preview the selected file."""
 
         # Sanity check: Make sure we actually have files to process.
         if not self._files:
-            if close_when_out_of_files:
-                return self.close_window()
-
-            else:
-                # Prompt for a new folder the first time we run out of files.
-                # If the user cancels this time, quit the application.
-                self.browse()
-                if not self._files:
-                    return self.close_window()
+            # FIXME: When would this method be called with no files open?
+            showerror("Error",
+                      "Cannot display a preview because no files are open.",
+                      parent=self)
+            return
 
         self._selected_index = index
         selected_file = self._files[index]
