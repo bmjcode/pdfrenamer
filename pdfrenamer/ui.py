@@ -373,7 +373,6 @@ class PDFRenamer(Tk):
 
             # Close all open files
             del self._files[:]
-            self._update_go_menu()
             self._selected_index = 0
 
             for path in paths:
