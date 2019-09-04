@@ -663,8 +663,7 @@ class PDFRenamer(Tk):
         m_go = self.m_go
         m_go.delete(3, "end")
 
-        i = 0
-        for path in self._files:
+        for i, path in enumerate(self._files):
             # Command to display this file
             go_command = lambda event=None, i=i: self._preview(i)
 
@@ -673,7 +672,6 @@ class PDFRenamer(Tk):
                                  variable=self._selected_file,
                                  value=path,
                                  command=go_command)
-            i += 1
 
 
 class Toolbutton(TkButton):
