@@ -8,9 +8,11 @@ from glob import iglob
 try:
     # Python 3
     from tkinter import TclError
+    import tkinter.ttk as ttk
 except (ImportError):
     # Python 2
     from Tkinter import TclError
+    import ttk
 
 from .ui import PDFRenamer
 
@@ -24,6 +26,11 @@ def main():
 
     # Start the application
     r = PDFRenamer()
+
+    # Configure toolbar button styles
+    s = ttk.Style()
+    s.configure("ToolbarFlat.TButton", borderwidth=1, relief="flat")
+    s.configure("ToolbarRaised.TButton", borderwidth=1, relief="raised")
 
     try:
         # Start with the window maximized

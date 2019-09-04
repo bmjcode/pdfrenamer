@@ -12,7 +12,6 @@ try:
                                     askopenfilenames,
                                     asksaveasfilename)
     from tkinter.messagebox import showerror, showwarning
-    from tkinter import Button as TkButton
 except (ImportError):
     # Python 2
     from Tkinter import *
@@ -21,7 +20,6 @@ except (ImportError):
                               askopenfilenames,
                               asksaveasfilename)
     from tkMessageBox import showerror, showwarning
-    from Tkinter import Button as TkButton
 
 try:
     # Python 3
@@ -33,7 +31,7 @@ except (ImportError):
 import userpaths
 from tkdocviewer import DocViewer
 
-from . import config, util
+from . import config, icons, util
 from .about_dialog import AboutDialog
 
 
@@ -73,23 +71,41 @@ class PDFRenamer(Tk):
         f = Frame(self)
         f.pack(side="top", fill="x")
 
+        # Icons
+        self._icon_back = PhotoImage(data=icons.action_back_gif)
+        self._icon_forward = PhotoImage(data=icons.action_forward_gif)
+        self._icon_wand = PhotoImage(data=icons.icon_wand_gif)
+
         # Left-hand command buttons
-        Toolbutton(f,
-                   text="< Prev",
-                   command=self.go_previous).pack(side="left")
-        Toolbutton(f,
-                   text="Next >",
-                   command=self.go_next).pack(side="left")
+        b = Toolbutton(f,
+                       width=4,
+                       text="Prev",
+                       image=self._icon_back,
+                       compound="left",
+                       command=self.go_previous)
+        b.pack(side="left", ipadx=4, fill="y")
+
+        b = Toolbutton(f,
+                       width=4,
+                       text="Next",
+                       image=self._icon_forward,
+                       compound="left",
+                       command=self.go_next)
+        b.pack(side="left", ipadx=4, fill="y")
 
         # Right-hand command buttons
-        Toolbutton(f,
-                   text="Rename",
-                   command=self.rename_and_go_next).pack(side="right")
+        b = Toolbutton(f,
+                       width=6,
+                       text="Rename",
+                       image=self._icon_wand,
+                       compound="left",
+                       command=self.rename_and_go_next)
+        b.pack(side="right", ipadx=6, fill="y")
 
         # Text entry for the new filename
         e = self.filename_entry = Entry(f,
                                         textvariable=self._new_name)
-        e.pack(side="left", expand=1, fill="both", padx=2)
+        e.pack(side="left", expand=1, fill="both", padx=1)
 
         # Key bindings for the entry box
         e.bind("<Return>", self.rename_and_go_next)
@@ -696,24 +712,28 @@ class PDFRenamer(Tk):
                                  command=go_command)
 
 
-class Toolbutton(TkButton):
+class Toolbutton(Button):
     """A flat toolbar button that raises on mouseover."""
 
     def __init__(self, master, **kw):
         """Return a new Toolbutton widget."""
 
-        TkButton.__init__(self, master, **kw)
+        Button.__init__(self, master, **kw)
 
-        self.configure(width=10,
-                       takefocus=0,
-                       borderwidth=1,
-                       relief="flat")
+        self.configure(takefocus=0,
+                       style="ToolbarFlat.TButton")
 
         # Tk widgets have the overrelief property to achieve this effect,
         # but the widget reverts to its default relief after being clicked.
         # Binding to Enter / Leave makes the mouseover relief persistent.
-        self.bind("<Enter>", lambda event: self.configure(relief="raised"))
-        self.bind("<Leave>", lambda event: self.configure(relief="flat"))
+        self.bind("<Enter>", self._handle_enter)
+        self.bind("<Leave>", self._handle_leave)
+
+    def _handle_enter(self, event):
+        self.configure(style="ToolbarRaised.TButton")
+
+    def _handle_leave(self, event):
+        self.configure(style="ToolbarFlat.TButton")
 
 
 class RenamerError(Exception):
