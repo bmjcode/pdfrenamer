@@ -15,7 +15,6 @@ URL = "https://github.com/bmjcode/pdfrenamer"
 PACKAGES = find_packages()
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
-    "Programming Language :: Python :: 2",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: ISC License (ISCL)",
     "Operating System :: OS Independent",

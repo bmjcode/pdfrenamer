@@ -1,13 +1,7 @@
 """About dialog."""
 
-try:
-    # Python 3
-    from tkinter import *
-    from tkinter.ttk import *
-except (ImportError):
-    # Python 2
-    from Tkinter import *
-    from ttk import *
+from tkinter import *
+from tkinter.ttk import *
 
 
 class AboutDialog(Toplevel):
