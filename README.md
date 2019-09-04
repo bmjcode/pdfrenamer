@@ -24,7 +24,7 @@ More likely than not, you'll also want [Ghostscript](https://ghostscript.com/) f
 
 If `pip` is available on your system, you can install the needed Python modules by running:
 ```
-python -m pip install tkDocViewer userpaths pillow
+python3 -m pip install tkDocViewer userpaths pillow
 ```
 
 You can then start PDF Renamer from the source directory by running:
@@ -34,7 +34,7 @@ You can then start PDF Renamer from the source directory by running:
 
 You can also install it system-wide by running:
 ```
-python setup.py install
+python3 setup.py install
 ```
 
 After installing PDF Renamer, you can start it by running `pdfrenamer`.
