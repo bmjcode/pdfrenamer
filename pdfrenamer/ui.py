@@ -255,7 +255,21 @@ class PDFRenamer(Tk):
         else:
             initialdir = self._browse_dir
 
+        doc_extensions = "*.pdf"
+        image_extensions = " ".join("*{0}".format(ext)
+                                    for ext in DocViewer.image_extensions)
+        text_extensions = " ".join("*{0}".format(ext)
+                                   for ext in DocViewer.text_extensions)
+
+        all_extensions = " ".join((doc_extensions,
+                                   image_extensions,
+                                   text_extensions))
+
         filetypes = (
+            ("All Supported File Types", all_extensions),
+            ("Documents", doc_extensions),
+            ("Image Files", image_extensions),
+            ("Plain-Text Files", text_extensions),
             ("All Files", "*.*"),
         )
 
