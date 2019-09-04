@@ -119,67 +119,8 @@ class PDFRenamer(Tk):
         sg = Sizegrip(v)
         sg.grid(row=1, column=1, sticky="se")
 
-        # Menu bar
-        top = self.winfo_toplevel()
-        m = top["menu"] = Menu(top)
-
-        # File menu
-        m_file = Menu(m, tearoff=0)
-        m_file.add_command(label="Open Files...",
-                           accelerator="Ctrl+O",
-                           underline=0,
-                           command=self.browse)
-        m_file.add_command(label="Open Folder...",
-                           underline=5,
-                           command=self.browse_for_dir)
-        m_file.add_separator()
-        m_file.add_command(label="Open in Default Viewer...",
-                           underline=16,
-                           accelerator="Ctrl+R",
-                           command=self.open_in_default_viewer)
-        m_file.add_command(label="Rename and Move...",
-                           underline=11,
-                           accelerator="Ctrl+M",
-                           command=self.rename_and_move)
-        m_file.add_separator()
-        m_file.add_command(label="Close",
-                           underline=0,
-                           accelerator="Ctrl+W",
-                           command=self.close_file)
-        m_file.add_command(label="Exit",
-                           underline=1,
-                           accelerator="Ctrl+Q",
-                           command=self.close_window)
-        m.add_cascade(label="File", underline=0, menu=m_file)
-
-        # Go menu
-        m_go = self.m_go = Menu(m, tearoff=0)
-        m_go.add_command(label="Previous",
-                         underline=0,
-                         accelerator="Page Up",
-                         command=self.go_previous)
-        m_go.add_command(label="Next",
-                         underline=0,
-                         accelerator="Page Down",
-                         command=self.go_next)
-        m_go.add_separator()
-        # The rest of the menu will be filled with the names of open files
-        m.add_cascade(label="Go", underline=0, menu=m_go)
-
-        # Options menu
-        m_options = self.m_options = Menu(m, tearoff=0)
-        m_options.add_checkbutton(label="Enable PDF Downscaling",
-                                  underline=11,
-                                  variable=v.enable_downscaling,
-                                  command=self.reload)
-        m.add_cascade(label="Options", underline=0, menu=m_options)
-
-        # Help menu
-        m_help = self.m_help = Menu(m, tearoff=0)
-        m_help.add_command(label="About...",
-                           underline=0,
-                           command=self.about_dialog)
-        m.add_cascade(label="Help", underline=0, menu=m_help)
+        # Populate the menu bar
+        self._create_menus()
 
         # Key bindings
         self.bind("<F5>", self.reload)
@@ -540,6 +481,71 @@ class PDFRenamer(Tk):
             Tk.title(self, config.NAME)
 
     # ------------------------------------------------------------------------
+
+    def _create_menus(self):
+        """Populate the menu bar."""
+
+        # Menu bar
+        top = self.winfo_toplevel()
+        m = top["menu"] = Menu(top)
+
+        # File menu
+        m_file = Menu(m, tearoff=0)
+        m_file.add_command(label="Open Files...",
+                           accelerator="Ctrl+O",
+                           underline=0,
+                           command=self.browse)
+        m_file.add_command(label="Open Folder...",
+                           underline=5,
+                           command=self.browse_for_dir)
+        m_file.add_separator()
+        m_file.add_command(label="Open in Default Viewer...",
+                           underline=16,
+                           accelerator="Ctrl+R",
+                           command=self.open_in_default_viewer)
+        m_file.add_command(label="Rename and Move...",
+                           underline=11,
+                           accelerator="Ctrl+M",
+                           command=self.rename_and_move)
+        m_file.add_separator()
+        m_file.add_command(label="Close",
+                           underline=0,
+                           accelerator="Ctrl+W",
+                           command=self.close_file)
+        m_file.add_command(label="Exit",
+                           underline=1,
+                           accelerator="Ctrl+Q",
+                           command=self.close_window)
+        m.add_cascade(label="File", underline=0, menu=m_file)
+
+        # Go menu
+        m_go = self.m_go = Menu(m, tearoff=0)
+        m_go.add_command(label="Previous",
+                         underline=0,
+                         accelerator="Page Up",
+                         command=self.go_previous)
+        m_go.add_command(label="Next",
+                         underline=0,
+                         accelerator="Page Down",
+                         command=self.go_next)
+        m_go.add_separator()
+        # The rest of the menu will be filled with the names of open files
+        m.add_cascade(label="Go", underline=0, menu=m_go)
+
+        # Options menu
+        m_options = self.m_options = Menu(m, tearoff=0)
+        m_options.add_checkbutton(label="Enable PDF Downscaling",
+                                  underline=11,
+                                  variable=self.viewer.enable_downscaling,
+                                  command=self.reload)
+        m.add_cascade(label="Options", underline=0, menu=m_options)
+
+        # Help menu
+        m_help = self.m_help = Menu(m, tearoff=0)
+        m_help.add_command(label="About...",
+                           underline=0,
+                           command=self.about_dialog)
+        m.add_cascade(label="Help", underline=0, menu=m_help)
 
     def _load_config(self):
         """Load configuration options."""
