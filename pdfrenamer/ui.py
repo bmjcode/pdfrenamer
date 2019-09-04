@@ -33,7 +33,7 @@ except (ImportError):
 import userpaths
 from tkdocviewer import DocViewer
 
-from . import config
+from . import config, util
 from .about_dialog import AboutDialog
 
 
@@ -422,7 +422,7 @@ class PDFRenamer(Tk):
         """Open the current document in the user's default viewer."""
 
         try:
-            os.startfile(self._selected_file.get())
+            util.startfile(self._selected_file.get())
 
         except (Exception):
             showwarning("Not Implemented",
