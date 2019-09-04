@@ -30,7 +30,9 @@ class PDFRenamer(Frame):
         """Return a new PDF Renamer application window."""
 
         Frame.__init__(self, master, **kw)
-        self.title(None)            # Note we've overridden this function
+
+        top = self.winfo_toplevel()
+        top.title(config.NAME)
 
         # List of currently displayed files
         self._files = []
@@ -123,21 +125,20 @@ class PDFRenamer(Frame):
         self._create_menus()
 
         # Key bindings
-        self.bind("<F5>", self.reload)
-        self.bind("<Prior>", self.go_previous)              # page up
-        self.bind("<Next>", self.go_next)                   # page down
-        self.bind("<Control-l>", self.focus_filename_entry)
-        self.bind("<Control-m>", self.rename_and_move)
-        self.bind("<Control-o>", self.browse)
-        self.bind("<Control-q>", self.close_window)
-        self.bind("<Control-r>", self.open_in_default_viewer)
-        self.bind("<Control-w>", self.close_file)
+        top.bind("<F5>", self.reload)
+        top.bind("<Prior>", self.go_previous)               # page up
+        top.bind("<Next>", self.go_next)                    # page down
+        top.bind("<Control-l>", self.focus_filename_entry)
+        top.bind("<Control-m>", self.rename_and_move)
+        top.bind("<Control-o>", self.browse)
+        top.bind("<Control-q>", self.close_window)
+        top.bind("<Control-r>", self.open_in_default_viewer)
+        top.bind("<Control-w>", self.close_file)
 
         # Cancel PDF rendering when Esc is pressed
-        self.bind("<Escape>", v.cancel_rendering)
+        top.bind("<Escape>", v.cancel_rendering)
 
         # Call close_window() when the window is X'd
-        top = self.winfo_toplevel()
         top.protocol("WM_DELETE_WINDOW", self.close_window)
 
         # Load configuration options
