@@ -186,7 +186,14 @@ class PDFRenamer(Frame):
         else:
             initialdir = self._browse_dir
 
-        doc_extensions = "*.pdf"
+        if hasattr(DocViewer, "doc_extensions"):
+            doc_extensions = " ".join("*{0}".format(ext)
+                                      for ext in DocViewer.doc_extensions)
+        else:
+            # Older versions of tkDocViewer are limited to PDF and Postscript,
+            # and don't export a list of known document extensions
+            doc_extensions = "*.pdf *.ps"
+
         image_extensions = " ".join("*{0}".format(ext)
                                     for ext in DocViewer.image_extensions)
         text_extensions = " ".join("*{0}".format(ext)
