@@ -18,7 +18,7 @@ When you have finished renaming all your files, PDF Renamer will loop back aroun
 
 ## Installing from Source
 
-PDF Renamer requires Python 3, Tkinter, [tkDocViewer](https://github.com/bmjcode/tkDocViewer), and [userpaths](https://github.com/bmjcode/userpaths). Python 2 support has been dropped as of version 1.1.0.
+PDF Renamer requires Python 3, Tkinter, [tkDocViewer](https://github.com/bmjcode/tkDocViewer) (2.0.0 or greater), and [userpaths](https://github.com/bmjcode/userpaths). Python 2 support has been dropped as of version 1.1.0.
 
 More likely than not, you'll also want [Ghostscript](https://ghostscript.com/) for PDF support, and [Pillow](https://python-pillow.org/) for PNG, GIF, and JPEG support. PDF Renamer will technically run without them, but file format support will be extremely limited. Many Linux and Unix systems come with Ghostscript already installed; try running `gs --version` to check.
 
