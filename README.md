@@ -1,40 +1,49 @@
-**PDF Renamer** is a simple utility to preview and rename documents. The name's a bit misleading, since it can display other file formats now, too. But renaming PDFs was its original purpose, and I haven't yet thought of anything more clever to call it.
+**PDF Renamer** is a simple utility to preview and rename documents. It actually supports a number of document and image formats, but renaming PDFs was its original purpose, and I haven't yet thought of anything more clever to call it. (Feel free to get in touch if you have any suggestions.)
 
 
-## Quick Start
+## Running on Windows
 
-First things first: You'll need [Ghostscript](https://ghostscript.com/) installed to display PDF files. Support for other formats is built into PDF Renamer itself.
+PDF Renamer is available for Windows 7 and newer versions.
 
-If you're running Windows, you can download a ready-to-run `PDF Renamer.exe` from GitHub. If you're running Linux, Unix, or macOS, see the instructions under "Installing from Source" below.
+You can download a ready-to-run `PDF.Renamer.exe` from the [releases page](https://github.com/bmjcode/pdfrenamer/releases). If you're reading this on GitHub, note this README is from the latest development version. The releases on that page may be older versions that don't have all the features described here.
 
-Using PDF Renamer is pretty straightforward:
+You need [Ghostscript](https://ghostscript.com/download/gsdnld.html) to display PDF and Postscript files. Install it to the default location in Program Files.
 
-1. Select the folder containing the files you want to rename. (You can also drag and drop files onto the PDF Renamer icon, or pass their names on the command line, to bypass this prompt.) PDF Renamer will display the first file it finds.
-2. Enter a new name for this file in the box at the top. (You don't need to include the extension; PDF Renamer will automatically keep the current one.)
-3. Press Enter to rename this file and move on to the next.
-
-When you have finished renaming all your files, PDF Renamer will loop back around to the first file. At this point you're good to go -- you can either close the application, or browse for another folder and keep renaming stuff.
+You need [GhostXPS](https://ghostscript.com/download/gxpsdnld.html) to display XPS files. Extract the ZIP file to the same folder where you saved `PDF.Renamer.exe`.
 
 
 ## Installing from Source
 
-PDF Renamer requires Python 3, Tkinter, [tkDocViewer](https://github.com/bmjcode/tkDocViewer) (2.0.0 or greater), and [userpaths](https://github.com/bmjcode/userpaths). Python 2 support has been dropped as of version 1.1.0.
+PDF Renamer should run on any recent Windows, Linux, or Unix system that meets the requirements below. It probably also runs on macOS, but this has not yet been tested.
 
-More likely than not, you'll also want [Ghostscript](https://ghostscript.com/) for PDF support, and [Pillow](https://python-pillow.org/) for PNG, GIF, and JPEG support. PDF Renamer will technically run without them, but file format support will be extremely limited. Many Linux and Unix systems come with Ghostscript already installed; try running `gs --version` to check.
+To run PDF Renamer, you need Python 3, Tkinter, [tkDocViewer](https://github.com/bmjcode/tkDocViewer) (version 2.0.0 or greater), and [userpaths](https://github.com/bmjcode/userpaths). [Pillow](https://python-pillow.org/) is optional, but highly recommended for image format support. Python 2 support has been dropped as of version 1.1.0.
 
 If `pip` is available on your system, you can install the needed Python modules by running:
 ```
 python3 -m pip install tkDocViewer userpaths pillow
 ```
 
-You can then start PDF Renamer from the source directory by running:
+tkDocViewer has a number of runtime dependencies; see its README for the complete list. Make sure you've installed what you need for the formats you want to view. In particular, you'll need [Ghostscript](https://ghostscript.com/) to display PDF and Postscript files. (Most Linux distributions include Ghostscript as part of their print system. If you're on Linux, try running `gs --version` to see if it's installed.)
+
+Once you have everything you need installed, you can start PDF Renamer from the source directory by running:
 ```
 ./run.py
 ```
 
 You can also install it system-wide by running:
 ```
-python3 setup.py install
+./setup.py install
 ```
+after which you can start it anywhere by running `pdfrenamer`.
 
-After installing PDF Renamer, you can start it by running `pdfrenamer`.
+
+## Quick Start
+
+Using PDF Renamer is pretty straightforward:
+
+1. Select the files you want to rename. The first file will be displayed.
+2. Enter a new name for the file. You don't have to include the extension; PDF Renamer will automatically keep its current extension.
+3. Press Enter to rename this file. The next file will be displayed.
+4. Repeat steps 2 and 3 for each remaining file.
+
+After you rename your last file, PDF Renamer will loop back to your first file. Congratulations, you are done. You can either close the application, or browse for more files to rename.
