@@ -45,6 +45,9 @@ def find_executable(basenames, search_dirs=None):
                 return candidate
 
 
+# ------------------------------------------------------------------------
+
+
 try:
     # Use the native os.startfile() if available
     startfile = os.startfile
@@ -56,7 +59,7 @@ except (AttributeError):
     _startfile_opener = find_executable(["open", "xdg-open"])
 
     def _startfile(path, operation=None):
-        """Platform-independent replacement for os.startfile().
+        """Alternate implementation of os.startfile() for Unix-like systems.
 
         The operation argument is ignored, but accepted for compatibility
         with the Windows implementation in Python's os module.
