@@ -186,35 +186,10 @@ class PDFRenamer(Frame):
         else:
             initialdir = self._browse_dir
 
-        if hasattr(DocViewer, "doc_extensions"):
-            doc_extensions = " ".join("*{0}".format(ext)
-                                      for ext in DocViewer.doc_extensions)
-        else:
-            # Older versions of tkDocViewer are limited to PDF and Postscript,
-            # and don't export a list of known document extensions
-            doc_extensions = "*.pdf *.ps"
-
-        image_extensions = " ".join("*{0}".format(ext)
-                                    for ext in DocViewer.image_extensions)
-        text_extensions = " ".join("*{0}".format(ext)
-                                   for ext in DocViewer.text_extensions)
-
-        all_extensions = " ".join((doc_extensions,
-                                   image_extensions,
-                                   text_extensions))
-
-        filetypes = (
-            ("All Supported File Types", all_extensions),
-            ("Documents", doc_extensions),
-            ("Image Files", image_extensions),
-            ("Plain-Text Files", text_extensions),
-            ("All Files", "*.*"),
-        )
-
         new_files = askopenfilenames(parent=self,
                                      title="Select Files to Rename",
                                      initialdir=initialdir,
-                                     filetypes=filetypes)
+                                     filetypes=self.viewer.filetypes())
 
         if new_files:
             # Note that self.open() will normalize the pathnames
