@@ -5,7 +5,13 @@ import sys
 
 from glob import iglob
 
-from tkinter import TclError, Tk, ttk
+try:
+    # Python 3
+    from tkinter import TclError, Tk, ttk
+except (ImportError):
+    # Python 2
+    from Tkinter import TclError, Tk
+    import ttk
 
 from .ui import PDFRenamer
 

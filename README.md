@@ -16,7 +16,7 @@ You need [GhostXPS](https://ghostscript.com/download/gxpsdnld.html) to display X
 
 PDF Renamer should run on any recent Windows, Linux, or Unix system that meets the requirements below. It probably also runs on macOS, but this has not yet been tested.
 
-To run PDF Renamer, you need Python 3, Tkinter, [tkDocViewer](https://github.com/bmjcode/tkDocViewer) (version 2.0.0 or greater), and [userpaths](https://github.com/bmjcode/userpaths). [Pillow](https://python-pillow.org/) is optional, but highly recommended for image format support. Python 2 support has been dropped as of version 1.1.0.
+To run PDF Renamer, you need Python, Tkinter, [tkDocViewer](https://github.com/bmjcode/tkDocViewer) (version 2.0.0 or greater), and [userpaths](https://github.com/bmjcode/userpaths). [Pillow](https://python-pillow.org/) is optional, but highly recommended for image format support. Python 3 is preferred; Python 2 support may be phased out in a future release.
 
 If `pip` is available on your system, you can install the needed Python modules by running:
 ```

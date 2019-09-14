@@ -4,14 +4,29 @@ import os
 import sys
 import shutil
 
-from tkinter import *
-from tkinter.ttk import *
-from tkinter.filedialog import (askdirectory,
-                                askopenfilenames,
-                                asksaveasfilename)
-from tkinter.messagebox import showerror, showwarning
+try:
+    # Python 3
+    from tkinter import *
+    from tkinter.ttk import *
+    from tkinter.filedialog import (askdirectory,
+                                    askopenfilenames,
+                                    asksaveasfilename)
+    from tkinter.messagebox import showerror, showwarning
+except (ImportError):
+    # Python 2
+    from Tkinter import *
+    from ttk import *
+    from tkFileDialog import (askdirectory,
+                              askopenfilenames,
+                              asksaveasfilename)
+    from tkMessageBox import showerror, showwarning
 
-from configparser import RawConfigParser
+try:
+    # Python 3
+    from configparser import RawConfigParser
+except (ImportError):
+    # Python 2
+    from ConfigParser import RawConfigParser
 
 import userpaths
 from tkdocviewer import DocViewer

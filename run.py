@@ -5,8 +5,14 @@
 import os
 import sys
 
-from tkinter import Tk
-from tkinter.messagebox import showerror
+try:
+    # Python 3
+    from tkinter import Tk
+    from tkinter.messagebox import showerror
+except (ImportError):
+    # Python 2
+    from Tkinter import Tk
+    from tkMessageBox import showerror
 
 try:
     from pdfrenamer import main
