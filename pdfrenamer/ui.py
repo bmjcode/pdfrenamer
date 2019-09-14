@@ -69,6 +69,8 @@ class PDFRenamer(Frame):
         # Last used directory for the "Rename and Move" feature
         self._rename_and_move_dir = userpaths.get_my_documents()
 
+        # ----------------------------------------------------------------
+
         # Frame for the rename controls
         f = Frame(self)
         f.pack(side="top", fill="x")
@@ -118,6 +120,8 @@ class PDFRenamer(Frame):
         sep = Separator(self)
         sep.pack(fill="x")
 
+        # ----------------------------------------------------------------
+
         # Document viewer widget
         v = self.viewer = DocViewer(self,
                                     borderwidth=0,
@@ -132,9 +136,46 @@ class PDFRenamer(Frame):
         # Pack the viewer widget
         v.pack(side="top", expand=1, fill="both")
 
-        # Add a size grip for good measure
-        sg = Sizegrip(v)
+        # Bind viewer events
+        v.bind("<<DocumentStarted>>", self._handle_document_started)
+        v.bind("<<PageCount>>", self._handle_page_count)
+        v.bind("<<PageFinished>>", self._handle_page_finished)
+        v.bind("<<DocumentFinished>>", self._handle_document_finished)
+
+        # Size grip for the DocViewer
+        # Displayed on demand when the status bar is hidden
+        vsg = self._viewer_sizegrip = Sizegrip(v)
+
+        # ----------------------------------------------------------------
+
+        # Outer frame for status bar widgets
+        # Displayed on demand when a rendering thread is active
+        sfo = self._status_frame_outer = Frame(self)
+        sfo.grid_columnconfigure(0, weight=1)
+
+        # Separator
+        sep = Separator(sfo)
+        sep.grid(row=0, column=0, columnspan=2, sticky="we")
+
+        # Inner frame for status bar widgets
+        sf = self._status_frame = Frame(sfo)
+        sf.grid_columnconfigure(1, weight=1)
+        sf.grid(row=1, column=0, sticky="we")
+
+        # Progress bar
+        pb = self._progress_bar = Progressbar(sf,
+                                              length=120)
+        pb.grid(row=0, column=0, padx=2, pady=2)
+
+        # Status text
+        st = self._status_text = Label(sf)
+        st.grid(row=0, column=1, sticky="we")
+
+        # Size grip
+        sg = Sizegrip(sfo)
         sg.grid(row=1, column=1, sticky="se")
+
+        # ----------------------------------------------------------------
 
         # Populate the menu bar
         self._create_menus()
@@ -556,6 +597,59 @@ class PDFRenamer(Frame):
                            command=self.about_dialog)
         m.add_cascade(label="Help", underline=0, menu=m_help)
 
+    def _handle_document_finished(self, event):
+        """Handle DocViewer's DocumentFinished event."""
+
+        self._hide_status_bar()
+
+    def _handle_document_started(self, event):
+        """Handle DocViewer's DocumentStarted event."""
+
+        # Blank the status text
+        self._status_text.configure(text="")
+
+    def _handle_page_count(self, event):
+        """Handle DocViewer's PageCount event."""
+
+        self._show_status_bar()
+
+        # Reset the progress bar
+        self._progress_bar.configure(value=0,
+                                     maximum=self.viewer.page_count)
+
+    def _handle_page_finished(self, event):
+        """Handle DocViewer's PageFinished event."""
+
+        pc = self.viewer.page_count
+        rpc = self.viewer.rendered_page_count
+
+        # Identify the appropriate unit for the file being rendered
+        # Note: We use self.viewer.display_path rather than self._selected_file
+        # here because of a corner case when rendering animated GIFs. If the
+        # selected file is changed mid-render and the new file is a different
+        # format, an incorrect unit may be displayed as the render finishes.
+        base, ext = os.path.splitext(self.viewer.display_path)
+        if ext.lower() == ".gif":
+            unit = "frame"
+            units = "frames"
+        else:
+            unit = "page"
+            units = "pages"
+
+        message = (
+            "Rendered {0} of {1} {2}."
+            .format(rpc, pc, unit if pc == 1 else units)
+        )
+
+        self._progress_bar.step()
+        self._status_text.configure(text=message)
+
+    def _hide_status_bar(self):
+        """Hide the status bar."""
+
+        self._status_frame_outer.pack_forget()
+        self._viewer_sizegrip.grid(row=1, column=1, sticky="se")
+
     def _load_config(self):
         """Load configuration options."""
 
@@ -686,6 +780,12 @@ class PDFRenamer(Frame):
         except (Exception):
             # The worst case here is we can't save the configuration file
             pass
+
+    def _show_status_bar(self):
+        """Show the status bar."""
+
+        self._status_frame_outer.pack(side="bottom", fill="x")
+        self._viewer_sizegrip.grid_forget()
 
     def _update_go_menu(self):
         """Update the navigation menu."""
