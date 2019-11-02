@@ -652,7 +652,7 @@ class PDFRenamer(Frame):
             units = "pages"
 
         message = (
-            "Rendered {0} of {1} {2}."
+            "Rendered {0} of {1} {2} (press Esc to interrupt)."
             .format(rpc, pc, unit if pc == 1 else units)
         )
 
