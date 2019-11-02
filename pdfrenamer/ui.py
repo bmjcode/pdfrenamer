@@ -85,7 +85,6 @@ class PDFRenamer(Frame):
                        width=4,
                        text="Prev",
                        image=self._icon_back,
-                       compound="left",
                        command=self.go_previous)
         b.pack(side="left", ipadx=4, fill="y")
 
@@ -93,7 +92,6 @@ class PDFRenamer(Frame):
                        width=4,
                        text="Next",
                        image=self._icon_forward,
-                       compound="left",
                        command=self.go_next)
         b.pack(side="left", ipadx=4, fill="y")
 
@@ -102,7 +100,6 @@ class PDFRenamer(Frame):
                        width=6,
                        text="Rename",
                        image=self._icon_wand,
-                       compound="left",
                        command=self.rename_and_go_next)
         b.pack(side="right", ipadx=6, fill="y")
 
@@ -841,6 +838,7 @@ class Toolbutton(Button):
         Button.__init__(self, master, **kw)
 
         self.configure(takefocus=0,
+                       compound="left",
                        style="ToolbarFlat.TButton")
 
         # Tk widgets have the overrelief property to achieve this effect,
