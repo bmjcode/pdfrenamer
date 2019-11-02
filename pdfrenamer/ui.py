@@ -142,6 +142,7 @@ class PDFRenamer(Frame):
         v.bind("<<PageCount>>", self._handle_page_count)
         v.bind("<<PageFinished>>", self._handle_page_finished)
         v.bind("<<DocumentFinished>>", self._handle_document_finished)
+        v.bind("<<RenderingError>>", self._handle_rendering_error)
 
         # ----------------------------------------------------------------
 
@@ -626,6 +627,11 @@ class PDFRenamer(Frame):
         self._progress_bar.configure(value=0,
                                      maximum=self.viewer.page_count)
 
+        # This is a kludge in case the progress bar didn't initially want
+        # to report its real height -- see _show_status_bar()
+        self._hide_status_bar()
+        self._show_status_bar()
+
     def _handle_page_finished(self, event):
         """Handle DocViewer's PageFinished event."""
 
@@ -652,6 +658,11 @@ class PDFRenamer(Frame):
 
         self._progress_bar.step()
         self._status_text.configure(text=message)
+
+    def _handle_rendering_error(self, event):
+        """Handle DocViewer's RenderingError event."""
+
+        self._hide_status_bar()
 
     def _hide_status_bar(self):
         """Hide the status bar."""
