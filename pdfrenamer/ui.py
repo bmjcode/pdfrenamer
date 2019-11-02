@@ -125,6 +125,7 @@ class PDFRenamer(Frame):
         # Document viewer widget
         v = self.viewer = DocViewer(self,
                                     borderwidth=0,
+                                    scrollbars="vertical",
                                     use_ttk=True)
 
         # This fits most of a letter-size page on a modern widescreen display
@@ -142,16 +143,12 @@ class PDFRenamer(Frame):
         v.bind("<<PageFinished>>", self._handle_page_finished)
         v.bind("<<DocumentFinished>>", self._handle_document_finished)
 
-        # Size grip for the DocViewer
-        # Displayed on demand when the status bar is hidden
-        vsg = self._viewer_sizegrip = Sizegrip(v)
-
         # ----------------------------------------------------------------
 
         # Outer frame for status bar widgets
-        # Displayed on demand when a rendering thread is active
         sfo = self._status_frame_outer = Frame(self)
         sfo.grid_columnconfigure(0, weight=1)
+        sfo.pack(side="bottom", fill="x")
 
         # Separator
         sep = Separator(sfo)
@@ -165,7 +162,6 @@ class PDFRenamer(Frame):
         # Progress bar
         pb = self._progress_bar = Progressbar(sf,
                                               length=120)
-        pb.grid(row=0, column=0, padx=2, pady=2)
 
         # Status text
         st = self._status_text = Label(sf)
@@ -600,18 +596,23 @@ class PDFRenamer(Frame):
     def _handle_document_finished(self, event):
         """Handle DocViewer's DocumentFinished event."""
 
-        self._hide_status_bar()
+        # Blank the status text
+        self._status_text.configure(text="")
+
+        # Hide the progress bar
+        self._progress_bar.grid_forget()
 
     def _handle_document_started(self, event):
         """Handle DocViewer's DocumentStarted event."""
 
-        # Blank the status text
-        self._status_text.configure(text="")
+        # Tell the user we have started rendering
+        self._status_text.configure(text="Loading the document...")
+
+        # Display the progress bar
+        self._progress_bar.grid(row=0, column=0, padx=2, pady=2)
 
     def _handle_page_count(self, event):
         """Handle DocViewer's PageCount event."""
-
-        self._show_status_bar()
 
         # Reset the progress bar
         self._progress_bar.configure(value=0,
@@ -643,12 +644,6 @@ class PDFRenamer(Frame):
 
         self._progress_bar.step()
         self._status_text.configure(text=message)
-
-    def _hide_status_bar(self):
-        """Hide the status bar."""
-
-        self._status_frame_outer.pack_forget()
-        self._viewer_sizegrip.grid(row=1, column=1, sticky="se")
 
     def _load_config(self):
         """Load configuration options."""
@@ -780,12 +775,6 @@ class PDFRenamer(Frame):
         except (Exception):
             # The worst case here is we can't save the configuration file
             pass
-
-    def _show_status_bar(self):
-        """Show the status bar."""
-
-        self._status_frame_outer.pack(side="bottom", fill="x")
-        self._viewer_sizegrip.grid_forget()
 
     def _update_go_menu(self):
         """Update the navigation menu."""
