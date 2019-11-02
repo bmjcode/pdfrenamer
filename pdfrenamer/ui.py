@@ -394,8 +394,8 @@ class PDFRenamer(Frame):
                 # Close the application if no files were previously open
                 self.close_window()
 
-    def open_in_default_viewer(self, event=None):
-        """Open the current document in the user's default viewer."""
+    def open_in_system_viewer(self, event=None):
+        """Open the current document in the system's default viewer."""
 
         try:
             util.startfile(self._selected_file.get())
@@ -529,7 +529,7 @@ class PDFRenamer(Frame):
         top.bind("<Control-m>", self.rename_and_move)
         top.bind("<Control-o>", self.browse)
         top.bind("<Control-q>", self.close_window)
-        top.bind("<Control-r>", self.open_in_default_viewer)
+        top.bind("<Control-r>", self.open_in_system_viewer)
         top.bind("<Control-w>", self.close_file)
 
     def _create_menus(self):
@@ -549,10 +549,10 @@ class PDFRenamer(Frame):
                            underline=5,
                            command=self.browse_for_dir)
         m_file.add_separator()
-        m_file.add_command(label="Open in Default Viewer...",
-                           underline=16,
+        m_file.add_command(label="Open in System Viewer...",
+                           underline=15,
                            accelerator="Ctrl+R",
-                           command=self.open_in_default_viewer)
+                           command=self.open_in_system_viewer)
         m_file.add_command(label="Rename and Move...",
                            underline=11,
                            accelerator="Ctrl+M",
