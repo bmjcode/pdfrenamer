@@ -146,18 +146,13 @@ class PDFRenamer(Frame):
         # ----------------------------------------------------------------
 
         # Outer frame for status bar widgets
+        # Displayed as needed when a rendering process is active
         sfo = self._status_frame_outer = Frame(self)
-        sfo.grid_columnconfigure(0, weight=1)
-        sfo.pack(side="bottom", fill="x")
-
-        # Separator
-        sep = Separator(sfo)
-        sep.grid(row=0, column=0, columnspan=2, sticky="we")
 
         # Inner frame for status bar widgets
         sf = self._status_frame = Frame(sfo)
         sf.grid_columnconfigure(1, weight=1)
-        sf.grid(row=1, column=0, sticky="we")
+        sf.pack(side="top", fill="x", padx=2, pady=2)
 
         # Progress bar
         pb = self._progress_bar = Progressbar(sf,
@@ -167,15 +162,14 @@ class PDFRenamer(Frame):
         st = self._status_text = Label(sf)
         st.grid(row=0, column=1, sticky="we")
 
-        # Size grip
-        sg = Sizegrip(sfo)
-        sg.grid(row=1, column=1, sticky="se")
-
         # ----------------------------------------------------------------
 
         # Populate the menu bar
         self._create_menus()
         self._bind_keys()
+
+        # Install our custom handler for window configuration events
+        self.bind("<Configure>", self._handle_configure)
 
         # Call close_window() when the window is X'd
         top.protocol("WM_DELETE_WINDOW", self.close_window)
@@ -593,8 +587,19 @@ class PDFRenamer(Frame):
                            command=self.about_dialog)
         m.add_cascade(label="Help", underline=0, menu=m_help)
 
+    def _handle_configure(self, event):
+        """Handle window configuration events."""
+
+        if self.viewer.rendering.get():
+            # Move the status bar if the window geometry changed
+            self._hide_status_bar()
+            self._show_status_bar()
+
     def _handle_document_finished(self, event):
         """Handle DocViewer's DocumentFinished event."""
+
+        # Hide the status bar
+        self._hide_status_bar()
 
         # Blank the status text
         self._status_text.configure(text="")
@@ -609,7 +614,10 @@ class PDFRenamer(Frame):
         self._status_text.configure(text="Loading the document...")
 
         # Display the progress bar
-        self._progress_bar.grid(row=0, column=0, padx=2, pady=2)
+        self._progress_bar.grid(row=0, column=0, padx=(0, 2))
+
+        # Display the status bar
+        self._show_status_bar()
 
     def _handle_page_count(self, event):
         """Handle DocViewer's PageCount event."""
@@ -644,6 +652,11 @@ class PDFRenamer(Frame):
 
         self._progress_bar.step()
         self._status_text.configure(text=message)
+
+    def _hide_status_bar(self):
+        """Hide the status bar."""
+
+        self._status_frame_outer.place_forget()
 
     def _load_config(self):
         """Load configuration options."""
@@ -775,6 +788,21 @@ class PDFRenamer(Frame):
         except (Exception):
             # The worst case here is we can't save the configuration file
             pass
+
+    def _show_status_bar(self):
+        """Show the status bar."""
+
+        win_height = self.winfo_height()
+        sf_height = self._status_frame.winfo_reqheight()
+
+        # The status frame doesn't always return its real height immediately.
+        # If it's not cooperating, we'll come back to it later.
+        if sf_height <= 1:
+            return
+
+        # The status frame includes 2px of vertical padding on each side
+        sf_y = win_height - sf_height - 4
+        self._status_frame_outer.place(x=0, y=sf_y)
 
     def _update_go_menu(self):
         """Update the navigation menu."""
