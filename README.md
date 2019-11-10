@@ -37,7 +37,7 @@ You can also install it system-wide by running:
 after which you can start it anywhere by running `pdfrenamer`.
 
 
-## Quick Start
+## How to Use PDF Renamer
 
 Using PDF Renamer is pretty straightforward:
 
