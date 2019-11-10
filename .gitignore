@@ -1,8 +1,10 @@
 *.egg-info
+*.exe
 *.pyc
 *.spec
 *.swp
 __pycache__
 build/
 dist/
+ghostscript
 tkdocviewer
