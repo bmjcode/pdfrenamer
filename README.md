@@ -3,13 +3,11 @@
 
 ## Running on Windows
 
-PDF Renamer is available for Windows 7 and newer versions.
+**Windows installers are available on the [releases page on GitHub](https://github.com/bmjcode/pdfrenamer/releases).**
 
-You can download a ready-to-run `PDF.Renamer.exe` from the [releases page](https://github.com/bmjcode/pdfrenamer/releases). If you're reading this on GitHub, note this README is from the latest development version. The releases on that page may be older versions that don't have all the features described here.
+PDF Renamer runs on Windows 7 and newer versions. The installer includes Ghostscript and all the other goodies you need for full file format support.
 
-You need [Ghostscript](https://ghostscript.com/download/gsdnld.html) to display PDF and Postscript files. Install it to the default location in Program Files.
-
-You need [GhostXPS](https://ghostscript.com/download/gxpsdnld.html) to display XPS files. Extract the ZIP file to the same folder where you saved `PDF.Renamer.exe`.
+If you're reading this on GitHub, note this README is from the latest development sources. The installers are built from stable releases, which are safer for day-to-day use, but may not include all the features described in this document.
 
 
 ## Installing from Source
